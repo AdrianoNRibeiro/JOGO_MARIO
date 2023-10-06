@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo do Mario</title>
+    <!-- <link rel="stylesheet" href="stylemario.css"> -->
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+            box-sizing: border-box;
+        }
+
+        .game-board {
+            width: 100%;
+            height: 500px;
+            border-bottom: 15px solid rgb(17, 184, 17);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(#87ceeb, #e0f6ff);
+        }
+
+        .pipe {
+            position: absolute;
+            bottom: 0;
+            width: 50px;
+            animation: pipe-animation 2.5s infinite linear;
+        }
+
+        .mario {
+            position: absolute;
+            width: 110px;
+            bottom: 0;       
+        }
+
+        .jump {
+            animation: jump 500ms ease-out;
+        }
+
+        .clouds {
+            position: absolute;
+            width: 550px;
+            animation: clouds-animation 20s infinite linear;
+        }
+
+        .botoes {
+            width: 100%;
+        }
+
+        .reiniciar {
+            width: 100px;
+            height: 100px;
+            border: none;
+            border-radius: 100%;
+            color: #fff;
+            background-color: #f00;
+            padding: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .contador {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1;
+        }
+
+        .pts {
+            font-weight: bold;
+            font-size: 40px;
+        }
+
+        .sun {
+            width: 200px;
+            position: absolute;
+            animation: sun-animation 200s infinite ease-out;
+        }
+
+        .ocultar {
+            display: none !important;
+        }
+
+        .popup-gameover {
+            position: absolute;
+            width: 100%;
+            height: inherit;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid black;
+            background-color: #0000003b;
+            z-index: 99999999999999999999;
+        }
+
+        @keyframes sun-animation {
+            from {
+                right: -150px;
+            }
+
+            to {
+                right: 100%;
+            }
+        }
+
+        @keyframes pipe-animation {
+            from {
+                right: -80px;
+            }
+
+            to {
+                right: 100%;
+            }
+        }
+
+        @keyframes jump {
+            0% {
+                bottom: 0;
+            }
+
+            40% {
+                bottom: 180px;
+            }
+
+            50% {
+                bottom: 180px;
+            }
+
+            100% {
+                bottom: 0;
+            }
+        }
+
+        @keyframes clouds-animation {
+            from {
+                right: -550px;
+            }
+
+            to {
+                right: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-board">
+        <div class="popup-gameover ocultar" id="popup">
+            <h2 style="font-size:80px;color: rgb(218, 5, 5);font-weight: bolder;">GAME OVER</h2>
+        </div>
+        <div class="contador">
+            <layout style="font-size:25px;font-weight: bold;">SCORE</layout>
+            <laytou class="pts" id="pts">0</laytou>
+        </div>
+        <img src="https://i.ibb.co/zPhhp8X/sol.gif" class="sun">
+        <img src="https://i.ibb.co/LQYP9Zd/clouds.png" class="clouds">
+        <img src="https://i.ibb.co/qgC4MPZ/mario.gif" class="mario">
+        <img src="https://i.ibb.co/n6P4sMn/pipe.png" class="pipe">
+    </div>
+    <div class="botoes">
+        <button class="reiniciar" id="reinic">Reiniciar</button>
+    </div>
+
+    <!-- <script src="scriptmario.js"></script> -->
+    <script>
+        const mario = document.querySelector(".mario");
+        const pipe = document.querySelector(".pipe");
+        const reinic = document.querySelector("#reinic");
+        const pts = document.querySelector("#pts");
+        const popup = document.querySelector("#popup");
+        var contador = 0;
+
+        reinic.addEventListener("click",(evt)=>{
+            this.location.reload();
+        });
+
+        const jump = () => {  
+            
+            const pipePosition = pipe.offsetLeft;
+            const marioPosition = mario.offsetBottom;
+
+            mario.classList.add("jump");           
+            //pts.innerHTML = contador.toString();
+
+            setTimeout(() => {
+                mario.classList.remove("jump");                  
+            }, 500);
+
+            if(pipePosition <= 120 && marioPosition >= 180){
+                contador = 1;  
+            } 
+
+            contador += 1;
+            pts.innerHTML = contador.toString();   
+        };
+
+        const loop = setInterval(() => {
+
+            const pipePosition = pipe.offsetLeft;
+            const marioPosition = +window.getComputedStyle(mario).bottom.replace("px", "");
+
+            
+
+            if(pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
+                pipe.style.animation = "none";
+                pipe.style.left = `${pipePosition}px`;
+
+                mario.style.animation = "none";
+                mario.style.bottom = `${marioPosition}px`;
+
+                mario.src = "https://i.ibb.co/fCQ9hk5/game-over.png";
+                mario.style.width = "75px";
+                mario.style.marginLeft = "50px";
+
+                popup.classList.remove("ocultar");
+
+                contador - 1;
+
+                clearInterval(loop);
+            }
+                        
+        },10);
+
+        
+
+        document.addEventListener("keydown", jump);
+        document.addEventListener("touchstart", jump);
+
+
+        
+    </script>
+    
+</body>
+</html>
